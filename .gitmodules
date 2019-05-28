@@ -1,0 +1,4 @@
+[submodule "ghost/static"]
+	path = ghost/static
+	url = https://github.com/eshapiro42/deep-learning
+	branch = gh-pages
