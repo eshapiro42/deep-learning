@@ -31,7 +31,7 @@ might send ou">
     <meta property="og:url" content="http://localhost:2368/linear-regression-with-neurons/">
     <meta property="og:image" content="https://images.unsplash.com/photo-1511268594014-0e9d3ea5c33e?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ">
     <meta property="article:published_time" content="2019-05-28T02:42:02.000Z">
-    <meta property="article:modified_time" content="2019-05-29T03:41:16.000Z">
+    <meta property="article:modified_time" content="2019-05-29T03:58:08.000Z">
     <meta property="article:publisher" content="https://www.facebook.com/ghost">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Linear Regression With Neurons (1)">
@@ -76,7 +76,7 @@ might send ou">
     "headline": "Linear Regression With Neurons (1)",
     "url": "http://localhost:2368/linear-regression-with-neurons/",
     "datePublished": "2019-05-28T02:42:02.000Z",
-    "dateModified": "2019-05-29T03:41:16.000Z",
+    "dateModified": "2019-05-29T03:58:08.000Z",
     "image": {
         "@type": "ImageObject",
         "url": "https://images.unsplash.com/photo-1511268594014-0e9d3ea5c33e?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
@@ -263,16 +263,16 @@ C_{0.1}  &amp;= 16.8466666667.<br>
 <h1 id="gradientdescent">Gradient descent</h1>
 <p>It turns out that we can figure out which direction to shift the weight, and by how far, with a single computation. The actual method requires some knowledge of calculus, but the basic ideas should make sense to anyone following along. Just don't get scared off by the derivatives if you don't know what they are.</p>
 <p>Here is a plot of the cost for our neuron for a whole interval of possible weights. I computed this by calculating the cost associated with a bunch of weights in the interval $[-1, 5]$.</p>
-<iframe width="500" height="400" frameborder="0" scrolling="no" src="http://plot.ly/~eshapiro/18.embed"></iframe>
+<iframe width="500" height="400" frameborder="0" scrolling="no" src="https://plot.ly/~eshapiro/18.embed"></iframe>
 <p>Computing this whole graph is similar to Algorithm 2 above. That is, it's very inefficient and computationally intensive. The graph is solely for the sake of our visualizing the problem. Our neuron does not know the shape of the cost function, so it needs some other way update its weight for a better prediction.</p>
 <p>The inspiration behind the gradient descent algorithm comes from the idea of a ball rolling down a hill. The idea is that gravity will always pull the ball in the direction of <em>steepest descent</em>. For a visualization, press "Play" on the animation below.</p>
-<iframe width="500" height="400" frameborder="0" scrolling="no" src="http://plot.ly/~eshapiro/82.embed"></iframe>
+<iframe width="500" height="400" frameborder="0" scrolling="no" src="https://plot.ly/~eshapiro/82.embed"></iframe>
 <p>Of course, in real life the momentum of the ball would keep it moving to the right for a little while after it reached the bottom, then it would change directions and oscillate for a short time before finally settling at the bottom. But we don't care too much about the details, only the general idea.</p>
 <p>It just so happens that we have a way to compute, at any given point, the direction of steepest descent. Recall that the derivative of a function at a point (if it exists) tells us geometrically the slope of the tangent line to the function's curve at that point. Here's what the tangent line to the cost curve looks like when $w=0$:</p>
-<iframe width="500" height="400" frameborder="0" scrolling="no" src="http://plot.ly/~eshapiro/83.embed"></iframe>
+<iframe width="500" height="400" frameborder="0" scrolling="no" src="https://plot.ly/~eshapiro/83.embed"></iframe>
 <p>The slope of this tangent line is negative, implying that the cost is decreasing as we move to the right. This means that if the derivative is negative, we want to shift our weight to the right. And if the derivative is positive, we want the weight to shift to the left.</p>
 <p>Since the derivative at $w=0$ is negative, we shift $w$ to the right a bit, then reevaluate:</p>
-<iframe width="500" height="400" frameborder="0" scrolling="no" src="http://plot.ly/~eshapiro/85.embed"></iframe>
+<iframe width="500" height="400" frameborder="0" scrolling="no" src="https://plot.ly/~eshapiro/85.embed"></iframe>
 <p>The derivative is still negative, but it's <em>less</em> negative. So we should continue to shift $w$ to the right, but maybe not as much this time.</p>
 <p>If we continue this process, we should eventually shift $w$ to $2$, where the derivative is $0$. That is, the cost has a horizontal tangent line at this point. This is what tells us we have found a weight that minimzes the cost!</p>
 <p>The amount that we shift $w$ by in each iteration should be <em>proportional</em> to the magnitude of the derivative. That way it will move by a lot more when the cost is very high and a lot less when the cost is very low, so we don't overshoot our target by too much. Said another way, this will guarantee that if our weight is close to optimal, we shift it by a smaller amount than if it is far from optimal. We call this proportionality constant the learning rate, and I will talk more about learning rates in another post.</p>
@@ -393,12 +393,12 @@ class OneParameterNeuron(Neuron):
 <p>It actually works! Look how small our model got the cost after just 100 epochs of gradient descent! And look how close it got to the optimal value of $w=2$.</p>
 <p>There are some huge improvements that could be made to this code, in particular the <code>cost</code> and <code>compute_gradient</code> methods could be drastically sped up. However, this accurately reflects the algorithms we've discussed so far.</p>
 <p>It could be interesting to try training our neuron on a larger, not-so-perfect data set. We'll use this data, which consists of 1000 points which follow the same general trend as our previous data, but no longer sit perfectly on the line $y=2x$. This is more like data we might encounter in the real world!</p>
-<iframe width="100%" height="400" frameborder="0" scrolling="no" src="http://plot.ly/~eshapiro/89.embed"></iframe>
+<iframe width="100%" height="400" frameborder="0" scrolling="no" src="https://plot.ly/~eshapiro/89.embed"></iframe>
 <p>Watch what happens when we train our neuron with this new data:</p>
 <iframe height="600px" width="100%" src="https://repl.it/@EricShapiro/Linear-Regression-with-Neurons-2?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"></iframe>
 <br>
 <p>It still did a pretty good job! Of course, it can't get the cost down as low anymore, but that's because the data is no longer perfectly linear and so there is some unavoidable error in any linear model of the data. Here is the trendline that our model predicted, superimposed on the data:</p>
-<iframe width="100%" height="400" frameborder="0" scrolling="no" src="http://plot.ly/~eshapiro/93.embed"></iframe>
+<iframe width="100%" height="400" frameborder="0" scrolling="no" src="https://plot.ly/~eshapiro/93.embed"></iframe>
 <br>
 <p>I'd say that looks pretty good! As a comparison, least-squares linear regression predicts a slope of $1.95148117$ for this same data.</p>
 <p>This post is getting pretty long, so I'll leave it at that for now. In my next post, we'll improve our neuron by adding a second parameter, and we'll see how this makes everything a bit more complicated.</p>
