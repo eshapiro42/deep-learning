@@ -1,0 +1,371 @@
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Linear Regression With Neurons (1)</title>
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <link rel="shortcut icon" href="../../favicon.ico" type="image/x-icon">
+    <link rel="canonical" href="../index.html">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+    <meta property="og:site_name" content="Deep Learning">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Linear Regression With Neurons (1)">
+    <meta property="og:description" content="What are neurons?
+
+The goal of this post is to introduce artificial neurons  — the basic building
+blocks of a neural network — as well as the way in which they learn. Their
+general concept is based on their namesake, the neurons of the human brain.
+
+Biological NeuronsI'm no expert in cognitive science, but from what I understand
+a biological neuron receives a number of electrical impulses from surrounding
+neurons. Then, based on the cumulative intensity of these signals, the neuron
+might send ou">
+    <meta property="og:url" content="http://localhost:2368/linear-regression-with-neurons/">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1511268594014-0e9d3ea5c33e?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ">
+    <meta property="article:published_time" content="2019-05-28T02:42:02.000Z">
+    <meta property="article:modified_time" content="2019-05-29T03:11:08.000Z">
+    <meta property="article:publisher" content="https://www.facebook.com/ghost">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Linear Regression With Neurons (1)">
+    <meta name="twitter:description" content="What are neurons?
+
+The goal of this post is to introduce artificial neurons  — the basic building
+blocks of a neural network — as well as the way in which they learn. Their
+general concept is based on their namesake, the neurons of the human brain.
+
+Biological NeuronsI'm no expert in cognitive science, but from what I understand
+a biological neuron receives a number of electrical impulses from surrounding
+neurons. Then, based on the cumulative intensity of these signals, the neuron
+might send ou">
+    <meta name="twitter:url" content="http://localhost:2368/linear-regression-with-neurons/">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1511268594014-0e9d3ea5c33e?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Eric Shapiro">
+    <meta name="twitter:site" content="@tryghost">
+    <meta property="og:image:width" content="1080">
+    <meta property="og:image:height" content="720">
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Deep Learning",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "http://localhost:2368/favicon.ico",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Eric Shapiro",
+        "url": "http://localhost:2368/author/eric/",
+        "sameAs": []
+    },
+    "headline": "Linear Regression With Neurons (1)",
+    "url": "http://localhost:2368/linear-regression-with-neurons/",
+    "datePublished": "2019-05-28T02:42:02.000Z",
+    "dateModified": "2019-05-29T03:11:08.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1511268594014-0e9d3ea5c33e?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "width": 1080,
+        "height": 720
+    },
+    "description": "What are neurons?\n\nThe goal of this post is to introduce artificial neurons  — the basic building\nblocks of a neural network — as well as the way in which they learn. Their\ngeneral concept is based on their namesake, the neurons of the human brain.\n\nBiological NeuronsI&#x27;m no expert in cognitive science, but from what I understand\na biological neuron receives a number of electrical impulses from surrounding\nneurons. Then, based on the cumulative intensity of these signals, the neuron\nmight send ou",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://localhost:2368/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 2.23">
+    <link rel="alternate" type="application/rss+xml" title="Deep Learning" href="../../rss/index.html">
+
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic%7COpen+Sans:700,600,400">
+    <style amp-custom>html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0}article,aside,details,figcaption,figure,footer,header,main,menu,nav,section,summary{display:block}audio,canvas,progress,video{display:inline-block;vertical-align:baseline}audio:not([controls]){display:none;height:0}[hidden],template{display:none}a{background-color:transparent}a:active,a:hover{outline:0}abbr[title]{border-bottom:1px dotted}b,strong{font-weight:bold}dfn{font-style:italic}h1{margin:0.67em 0;font-size:2em}mark{background:#ff0;color:#000}small{font-size:80%}sub,sup{position:relative;vertical-align:baseline;font-size:75%;line-height:0}sup{top:-0.5em}sub{bottom:-0.25em}img{border:0}amp-img{border:0}svg:not(:root){overflow:hidden}figure{margin:1em 40px}hr{box-sizing:content-box;height:0}pre{overflow:auto}code,kbd,pre,samp{font-family:monospace, monospace;font-size:1em}button,input,optgroup,select,textarea{margin:0;color:inherit;font:inherit}button{overflow:visible}button,select{text-transform:none}button,html input[type="button"],input[type="reset"],input[type="submit"]{cursor:pointer;-webkit-appearance:button}button[disabled],html input[disabled]{cursor:default}button::-moz-focus-inner,input::-moz-focus-inner{padding:0;border:0}input{line-height:normal}input[type="checkbox"],input[type="radio"]{box-sizing:border-box;padding:0}input[type="number"]::-webkit-inner-spin-button,input[type="number"]::-webkit-outer-spin-button{height:auto}input[type="search"]{-webkit-appearance:textfield}input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit-search-decoration{-webkit-appearance:none}fieldset{margin:0 2px;padding:0.35em 0.625em 0.75em;border:1px solid #c0c0c0}legend{padding:0;border:0}textarea{overflow:auto}optgroup{font-weight:bold}table{border-spacing:0;border-collapse:collapse}td,th{padding:0}html{max-height:100%;height:100%;font-size:62.5%;-webkit-tap-highlight-color:rgba(0, 0, 0, 0)}body{max-height:100%;height:100%;color:#3a4145;background:#f4f8fb;letter-spacing:0.01rem;font-family:"Merriweather", serif;font-size:1.8rem;line-height:1.75em;text-rendering:geometricPrecision;-webkit-font-feature-settings:"kern" 1;-moz-font-feature-settings:"kern" 1;-o-font-feature-settings:"kern" 1}::-moz-selection{background:#d6edff}::selection{background:#d6edff}h1,h2,h3,h4,h5,h6{margin:0 0 0.3em 0;color:#2e2e2e;font-family:"Open Sans", sans-serif;line-height:1.15em;text-rendering:geometricPrecision;-webkit-font-feature-settings:"dlig" 1, "liga" 1, "lnum" 1, "kern" 1;-moz-font-feature-settings:"dlig" 1, "liga" 1, "lnum" 1, "kern" 1;-o-font-feature-settings:"dlig" 1, "liga" 1, "lnum" 1, "kern" 1}h1{text-indent:-2px;letter-spacing:-1px;font-size:2.6rem}h2{letter-spacing:0;font-size:2.4rem}h3{letter-spacing:-0.6px;font-size:2.1rem}h4{font-size:1.9rem}h5{font-size:1.8rem}h6{font-size:1.8rem}a{color:#4a4a4a}a:hover{color:#111}p,ul,ol,dl{margin:0 0 2.5rem 0;font-size:1.5rem;text-rendering:geometricPrecision;-webkit-font-feature-settings:"liga" 1, "onum" 1, "kern" 1;-moz-font-feature-settings:"liga" 1, "onum" 1, "kern" 1;-o-font-feature-settings:"liga" 1, "onum" 1, "kern" 1}ol,ul{padding-left:2em}ol ol,ul ul,ul ol,ol ul{margin:0 0 0.4em 0;padding-left:2em}dl dt{float:left;clear:left;overflow:hidden;margin-bottom:1em;width:180px;text-align:right;text-overflow:ellipsis;white-space:nowrap;font-weight:700}dl dd{margin-bottom:1em;margin-left:200px}li{margin:0.4em 0}li li{margin:0}hr{display:block;margin:1.75em 0;padding:0;height:1px;border:0;border-top:#efefef 1px solid}blockquote{box-sizing:border-box;margin:1.75em 0 1.75em 0;padding:0 0 0 1.75em;border-left:#4a4a4a 0.4em solid;-moz-box-sizing:border-box}blockquote p{margin:0.8em 0;font-style:italic}blockquote small{display:inline-block;margin:0.8em 0 0.8em 1.5em;color:#ccc;font-size:0.9em}blockquote small:before{content:"\2014 \00A0"}blockquote cite{font-weight:700}blockquote cite a{font-weight:normal}mark{background-color:#fdffb6}code,tt{padding:1px 3px;border:#e3edf3 1px solid;background:#f7fafb;border-radius:2px;white-space:pre-wrap;font-family:Inconsolata, monospace, sans-serif;font-size:0.85em;font-feature-settings:"liga" 0;-webkit-font-feature-settings:"liga" 0;-moz-font-feature-settings:"liga" 0}pre{overflow:auto;box-sizing:border-box;margin:0 0 1.75em 0;padding:10px;width:100%;border:#e3edf3 1px solid;background:#f7fafb;border-radius:3px;white-space:pre;font-family:Inconsolata, monospace, sans-serif;font-size:0.9em;-moz-box-sizing:border-box}pre code,pre tt{padding:0;border:none;background:transparent;white-space:pre-wrap;font-size:inherit}kbd{display:inline-block;margin-bottom:0.4em;padding:1px 8px;border:#ccc 1px solid;background:#f4f4f4;border-radius:4px;box-shadow:0 1px 0 rgba(0, 0, 0, 0.2), 0 1px 0 0 #fff inset;color:#666;text-shadow:#fff 0 1px 0;font-size:0.9em;font-weight:700}table{box-sizing:border-box;margin:1.75em 0;max-width:100%;width:100%;background-color:transparent;-moz-box-sizing:border-box}table th,table td{padding:8px;border-top:#efefef 1px solid;vertical-align:top;text-align:left;line-height:20px}table th{color:#000}table caption + thead tr:first-child th,table caption + thead tr:first-child td,table colgroup + thead tr:first-child th,table colgroup + thead tr:first-child td,table thead:first-child tr:first-child th,table thead:first-child tr:first-child td{border-top:0}table tbody + tbody{border-top:#efefef 2px solid}table table table{background-color:#fff}table tbody > tr:nth-child(odd) > td,table tbody > tr:nth-child(odd) > th{background-color:#f6f6f6}table.plain tbody > tr:nth-child(odd) > td,table.plain tbody > tr:nth-child(odd) > th{background:transparent}iframe,amp-iframe,.fluid-width-video-wrapper{display:block;margin:1.75em 0}.fluid-width-video-wrapper iframe,.fluid-width-video-wrapper amp-iframe{margin:0}textarea,select,input{margin:0 0 5px 0;padding:6px 9px;width:260px;outline:0;border:#e7eef2 1px solid;background:#fff;border-radius:4px;box-shadow:none;font-family:"Open Sans", sans-serif;font-size:1.6rem;line-height:1.4em;font-weight:100;-webkit-appearance:none}textarea{min-width:250px;min-height:80px;max-width:340px;width:100%;height:auto}input[type="text"]:focus,input[type="email"]:focus,input[type="search"]:focus,input[type="tel"]:focus,input[type="url"]:focus,input[type="password"]:focus,input[type="number"]:focus,input[type="date"]:focus,input[type="month"]:focus,input[type="week"]:focus,input[type="time"]:focus,input[type="datetime"]:focus,input[type="datetime-local"]:focus,textarea:focus{outline:none;outline-width:0;border:#bbc7cc 1px solid;background:#fff}select{width:270px;height:30px;line-height:30px}.clearfix:before,.clearfix:after{content:" ";display:table}.clearfix:after{clear:both}.clearfix{zoom:1}.main-header{position:relative;display:table;overflow:hidden;box-sizing:border-box;width:100%;height:50px;background:#5ba4e5 no-repeat center center;background-size:cover;text-align:left;-webkit-box-sizing:border-box;-moz-box-sizing:border-box}.content{background:#fff;padding-top:15px}.blog-title,.content{margin:auto;max-width:600px}.blog-title a{display:block;padding-right:16px;padding-left:16px;height:50px;color:#fff;text-decoration:none;font-family:"Open Sans", sans-serif;font-size:16px;line-height:50px;font-weight:600}.post{position:relative;margin-top:0;margin-right:16px;margin-left:16px;padding-bottom:0;max-width:100%;border-bottom:#ebf2f6 1px solid;word-wrap:break-word;font-size:0.95em;line-height:1.65em}.post-header{margin-bottom:1rem}.post-title{margin-bottom:0}.post-title a{text-decoration:none}.post-meta{display:block;margin:3px 0 0 0;color:#9eabb3;font-family:"Open Sans", sans-serif;font-size:1.3rem;line-height:2.2rem}.post-meta a{color:#9eabb3;text-decoration:none}.post-meta a:hover{text-decoration:underline}.post-meta .author{margin:0;font-size:1.3rem;line-height:1.3em}.post-date{display:inline-block;text-transform:uppercase;white-space:nowrap;font-size:1.2rem;line-height:1.2em}.post-image{margin:0;padding-top:3rem;padding-bottom:30px;border-top:1px #E8E8E8 solid}.post-content amp-img,.post-content amp-anim{position:relative;left:50%;display:block;padding:0;min-width:0;max-width:112%;width:calc(100% + 32px);height:auto;transform:translateX(-50%);-webkit-transform:translateX(-50%);-ms-transform:translateX(-50%)}.footnotes{font-size:1.3rem;line-height:1.6em;font-style:italic}.footnotes li{margin:0.6rem 0}.footnotes p{margin:0}.footnotes p a:last-child{text-decoration:none}.site-footer{position:relative;margin:0 auto 20px auto;padding:1rem 15px;max-width:600px;color:rgba(0,0,0,0.5);font-family:"Open Sans", sans-serif;font-size:1.1rem;line-height:1.75em}.site-footer a{color:rgba(0,0,0,0.5);text-decoration:none;font-weight:bold}.site-footer a:hover{border-bottom:#bbc7cc 1px solid}.poweredby{display:block;float:right;width:45%;text-align:right}.copyright{display:block;float:left;width:45%}</style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+
+    <script async custom-element="amp-iframe" src="https://cdn.ampproject.org/v0/amp-iframe-0.1.js"></script>
+
+</head>
+
+<body class="amp-template">
+    <header class="main-header">
+        <nav class="blog-title">
+            <a href="../../">Deep Learning</a>
+        </nav>
+    </header>
+
+    <main class="content" role="main">
+        <article class="post">
+
+            <header class="post-header">
+                <h1 class="post-title">Linear Regression With Neurons (1)</h1>
+                <section class="post-meta">
+                    <p class="author">by <a href="../../author/eric/">Eric Shapiro</a></p>
+                    <time class="post-date" datetime="2019-05-28">2019-05-28</time>
+                </section>
+            </header>
+            <figure class="post-image">
+                <amp-img src="https://images.unsplash.com/photo-1511268594014-0e9d3ea5c33e?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ" width="600" height="400" layout="responsive"></amp-img>
+            </figure>
+            <section class="post-content">
+
+                <h1 id="whatareneurons">What are neurons?</h1>
+<br>
+<p>The goal of this post is to introduce <strong>artificial neurons</strong> — the basic building blocks of a neural network — as well as the way in which they learn. Their general concept is based on their namesake, the neurons of the human brain.</p>
+<figure class="kg-card kg-image-card kg-card-hascaption"><figcaption>Biological Neurons</figcaption></figure><p>I'm no expert in cognitive science, but from what I understand a biological neuron receives a number of electrical impulses from surrounding neurons. Then, based on the cumulative intensity of these signals, the neuron might send out an electrical impulse of its own. This impulse is then transmitted to other neurons, which each decide whether to fire, ad infinitum.</p>
+<p>The mechanism which determines whether a particular neuron will fire given a set of input signals is still mysterious, but luckily we are not too concerned with it. We care only about the general behavior: a neuron takes a set of inputs, processes them in some way, and returns an output. This is exactly what our artificial neurons will do, just in a more transparent way.</p>
+<p>In the next post, I will give the full definition of an artificial neuron. For now, let's look at a minimal example — a neuron with a single input and a single parameter:  This neuron takes a single number $x$ as an input, multiplies it by a <strong>weight</strong> $w$, and returns their product, $wx$.</p>
+<p>It is important to note that the neuron's weight $w$ is part of the neuron itself, and thus it remains fixed no matter what input $x$ is fed to the neuron. However, the input can be any number. So, for instance, if $w=5$, then the neuron outputs $5x$ for any input $x$.</p>
+<p>So technically this neuron is just the function $N:\R\to\R$ defined by $N(x) = wx$, where $w\in\R$ is fixed. It is often useful to keep this function representation in the back of our minds, but we will prefer the graphical interpretation where a neuron is represented by a node, connected to inputs and outputs.</p>
+<h1 id="howdoneuronslearn">How do neurons learn?</h1>
+<br>
+<p>Now that you know how our one-parameter, single input neuron acts on inputs, it's time to see how we can train our neuron to make meaningful predictions. I will demonstrate this with the simplest example I can think of.</p>
+<p>Let's say we're given the following data, collected from three people at the grocery store, where $x$ represents the number of items they purchased and $y$ represents how much they paid, in dollars:</p>
+<p>$\begin{array}{|c|c|c|}<br>
+\hline<br>
+\text{Person} &amp; x = \text{Items} &amp; y = \text{Price} \\<br>
+\hline<br>
+\text{Sally}  &amp; 1                &amp; 2                \\<br>
+\hline<br>
+\text{Adam}   &amp; 2                &amp; 4                \\<br>
+\hline<br>
+\text{Fred}   &amp; 3                &amp; 6                \\<br>
+\hline<br>
+\end{array}$</p>
+<p>Seeing this table, it might be immediately apparent to you that $y=2x$ for each $x$ in the table. In practice, however, we are often faced with much larger amounts of data that do not follow such a clear trend. We would thus like our neuron to learn for itself how best to make predictions, based on the data. So in this case, we would like the neuron to figure out that it should set $w=2$.</p>
+<p>As simple as the problem is, this is easier said than done. But let's walk through training the neuron on our data set, step by step. To start off, we need to pick some value for $w$, so the neuron can actually do anything at all. Let's choose $w=0$, and see what predictions our neuron makes:</p>
+<p>$\begin{array}{|c|c|c|}<br>
+\hline<br>
+x &amp; \hat{y} = wx &amp; y \\<br>
+\hline<br>
+1 &amp; 0            &amp; 2 \\<br>
+\hline<br>
+2 &amp; 0            &amp; 4 \\<br>
+\hline<br>
+3 &amp; 0            &amp; 6 \\<br>
+\hline<br>
+\end{array}$</p>
+<p>Here, $\hat{y}$ represents the prediction made given the input value $x$, and $y$ represents the true value from our data set. It's safe to say that choosing $w=0$ is not giving us very good predictions. We would like to adjust $w$ so that the neuron does a better job. In order to do this, we need some way to measure just how badly the neuron is currently performing.</p>
+<p>We define the <strong>loss</strong> of the neuron for a single input value $x_i$ as follows:</p>
+<p>$L(x_i) = (y_i - \hat{y_i})^2.$</p>
+<p>This loss function $L$ basically tells us how badly the neuron is doing at predicting a single value $x_i$. Notice that if the prediction $\hat{y_i}$ is close to the actual value $y_i$, the loss will be small (positive, but close to zero). If the neuron is perfectly predicting the output, the loss will be exactly zero. If the neuron is given an input $x_i$ and spits out a terrible answer $\hat{y}_i$ that is very far from the true answer $y$, then the loss for that input will be huge.</p>
+<p>In the case of our example,</p>
+<p>$\begin{align}<br>
+L(x_1) &amp;= (y_1 - \hat{y}_1)^2 = (2 - 0)^2 = 4, \\<br>
+L(x_2) &amp;= (y_2 - \hat{y}_2)^2 = (4 - 0)^2 = 16, \\<br>
+L(x_3) &amp;= (y_3 - \hat{y}_3)^2 = (6 - 0)^2 = 36.<br>
+\end{align}$</p>
+<p>Notice that the loss for $x_1$ is small because the prediction is not too far from the actual result. As the predictions get further off, the losses grow exponentially.</p>
+<p>The loss function we've just defined is called the <strong>squared error</strong>, for obvious reasons. We could have defined a different loss function, if we'd wanted. For instance, we could have taken $L(x_i)=\abs{y_i - \hat{y}_i}$. This is called <strong>absolute error</strong>, but it is not used very often for reasons we will see shortly. There are plenty of other choices as well, but squared error will do just fine for now.</p>
+<p>Now that we have a measure for how poorly the neuron is performing for a single input, how can we measure how poorly the neuron is doing overall? The answer is simple — we can just average all the losses.</p>
+<p>We define the <strong>cost</strong> of the neuron to be</p>
+<p>$C = \frac{1}{m}\sum_{i=1}^m L(x_i),$</p>
+<p>where $m$ is the total number of data points (so in our case, $m=3$). This is literally just the average loss, computed over all the data. In our case,</p>
+<p>$\begin{align}<br>
+C &amp;= \tfrac{1}{3}\big(L(x_1)+L(x_2)+L(x_2)\big) \\<br>
+&amp;= \tfrac{1}{3}(4 + 16 + 36) \\<br>
+&amp;= \tfrac{56}{3} \\<br>
+&amp;\approx 18.6666666667.<br>
+\end{align}$</p>
+<p>So the goal now becomes <em>minimizing the cost</em> of our neuron! Once we have settled on a weight which makes the cost sufficiently low, we say our neuron is <strong>trained</strong>.</p>
+<p>Okay, so our neuron currently has a cost of $18.6666666667$. This doesn't really tell us too much by itself. We want the network to choose a new weight which will result in a lower cost. How can we accomplish this?</p>
+<p>One idea would be to keep randomly selecting weights and keeping track of which results in the lowest cost, i.e., is giving the best predictions according to our metric.</p>
+<blockquote>
+<p><strong>Algorithm 1. Random Guessing</strong></p>
+<ol>
+<li>Decide on some reasonable interval $[a, b]$ to search.</li>
+<li>Initialize <code>best_w = 0</code> and <code>best_cost = infinity</code> (or some very large number).</li>
+<li>Pick <code>w</code> randomly in the interval $[a, b]$.</li>
+<li>Compute the cost <code>C</code> of the neuron with the weight <code>w</code>.</li>
+<li>If <code>C</code> is smaller than <code>best_cost</code>, set <code>best_cost = C</code> and <code>best_w = w</code>.</li>
+<li>Go back to step 3 and repeat for as long as you like.</li>
+</ol>
+</blockquote>
+<p>But this is not really a good solution, since there are infinite numbers to choose from and the neuron has no idea where to look. (And in fact, in the general case of a network with many neurons it will probably never find decent weights.)</p>
+<p>What the neuron really needs is some context. Maybe it could try out two new weights, one slightly less than $0$ and one slightly greater than $0$, and see which weight results in a lower cost. So for instance, maybe we could try $-0.1$ and $0.1$. I won't bore you with the details of the computation, but what we end up with is:</p>
+<p>$\begin{align}<br>
+C_{-0.1} &amp;= 20.58, \\<br>
+C_{0.1}  &amp;= 16.8466666667.<br>
+\end{align}$</p>
+<p>What this tells us is that we can get better performance out of our neuron if we increase the weight $w$ from $0$ to $0.1$, whereas if we had decreased the weight then the neuron would have given us worse predictions. This seems correct, since we know in the back of our minds that the value of $w$ that would give perfect predictions is actually $2$, so we certainly want it to increase from $0$. We could keep repeating this process until shifting the weight in either direction would give a worse (higher) cost, and then we would be done.</p>
+<blockquote>
+<p><strong>Algorithm 2. Weight Sliding</strong></p>
+<ol>
+<li>Initialize <code>w = 0</code> and pick a small increment <code>increment</code>.</li>
+<li>Compute the costs <code>C_minus</code>, <code>C</code> and <code>C_plus</code> for the weights <code>w</code>, <code>w - increment</code> and <code>w + increment</code>, respectively.</li>
+<li>If <code>C_minus</code> is less than <code>C</code> and <code>C_plus</code>, update <code>C = C_minus</code> and <code>w = w - increment</code>.</li>
+<li>If instead <code>C_plus</code> is less than <code>C</code> and <code>C_minus</code>, update <code>C = C_plus</code> and <code>w = w + increment</code>.</li>
+<li>Otherwise, <code>C</code> is less than <code>C_minus</code> and <code>C_plus</code>, so we are done.</li>
+<li>Go back to step 2, but don't bother recomputing <code>C</code>.</li>
+</ol>
+</blockquote>
+<p>This isn't such a bad method. It will usually tell us which direction we should nudge the weight to improve the neuron's predictions. However, it always takes fixed-size steps, it is not foolproof and it does poorly from a computational standpoint — it requires us to compute the cost three times for each choice of weight, and compare them. It turns out there's a much better way!</p>
+<h1 id="gradientdescent">Gradient descent</h1>
+<br>
+<p>It turns out that we can figure out which direction to shift the weight, and by how far, with a single computation. The actual method requires some knowledge of calculus, but the basic ideas should make sense to anyone following along. Just don't get scared off by the derivatives if you don't know what they are.</p>
+<p>Here is a plot of the cost for our neuron for a whole interval of possible weights. I computed this by calculating the cost associated with a bunch of weights in the interval $[-1, 5]$.</p>
+<amp-iframe width="500" height="400" frameborder="0" src="https://plot.ly/~eshapiro/18.embed" sandbox="allow-scripts allow-same-origin" layout="responsive"></amp-iframe>
+<p>Computing this whole graph is similar to Algorithm 2 above. That is, it's very inefficient and computationally intensive. The graph is solely for the sake of our visualizing the problem. Our neuron does not know the shape of the cost function, so it needs some other way update its weight for a better prediction.</p>
+<p>The inspiration behind the gradient descent algorithm comes from the idea of a ball rolling down a hill. The idea is that gravity will always pull the ball in the direction of <em>steepest descent</em>. For a visualization, press "Play" on the animation below.</p>
+<amp-iframe width="500" height="400" frameborder="0" src="https://plot.ly/~eshapiro/82.embed" sandbox="allow-scripts allow-same-origin" layout="responsive"></amp-iframe>
+<p>Of course, in real life the momentum of the ball would keep it moving to the right for a little while after it reached the bottom, then it would change directions and oscillate for a short time before finally settling at the bottom. But we don't care too much about the details, only the general idea.</p>
+<p>It just so happens that we have a way to compute, at any given point, the direction of steepest descent. Recall that the derivative of a function at a point (if it exists) tells us geometrically the slope of the tangent line to the function's curve at that point. Here's what the tangent line to the cost curve looks like when $w=0$:</p>
+<amp-iframe width="500" height="400" frameborder="0" src="https://plot.ly/~eshapiro/83.embed" sandbox="allow-scripts allow-same-origin" layout="responsive"></amp-iframe>
+<p>The slope of this tangent line is negative, implying that the cost is decreasing as we move to the right. This means that if the derivative is negative, we want to shift our weight to the right. And if the derivative is positive, we want the weight to shift to the left.</p>
+<p>Since the derivative at $w=0$ is negative, we shift $w$ to the right a bit, then reevaluate:</p>
+<amp-iframe width="500" height="400" frameborder="0" src="https://plot.ly/~eshapiro/85.embed" sandbox="allow-scripts allow-same-origin" layout="responsive"></amp-iframe>
+<p>The derivative is still negative, but it's <em>less</em> negative. So we should continue to shift $w$ to the right, but maybe not as much this time.</p>
+<p>If we continue this process, we should eventually shift $w$ to $2$, where the derivative is $0$. That is, the cost has a horizontal tangent line at this point. This is what tells us we have found a weight that minimzes the cost!</p>
+<p>The amount that we shift $w$ by in each iteration should be <em>proportional</em> to the magnitude of the derivative. That way it will move by a lot more when the cost is very high and a lot less when the cost is very low, so we don't overshoot our target by too much. Said another way, this will guarantee that if our weight is close to optimal, we shift it by a smaller amount than if it is far from optimal. We call this proportionality constant the learning rate, and I will talk more about learning rates in another post.</p>
+<p>So here's the algorithm:</p>
+<blockquote>
+<p><strong>Algorithm 3. Gradient Descent</strong></p>
+<ol>
+<li>Pick an initial weight <code>w</code> using some predetermined method, and a small learning rate <code>learning_rate</code>.</li>
+<li>Compute the derivative of the cost with respect to <code>w</code>, call it <code>D_w</code>.</li>
+<li>Update <code>w = w - learning_rate * D_w</code>.</li>
+<li>Go back to step 2 and repeat for as long as you like, or until <code>D_w</code> is zero.</li>
+</ol>
+</blockquote>
+<h1 id="computingthegradient">Computing the gradient</h1>
+<br>
+<p>Since our neuron only has one weight to optimize, in this case 'gradient' just means derivative. We will shortly see an example where this is no longer the case. But for now, we need to figure out a way of calculating the derivative of our cost function for a specific value of $w$. That is, we need to find $\d{C}{w}$.</p>
+<p>Recall that $C$ is a function of the losses $L_i$, which are in turn functions of the outputs $\hat{y_i}$, which are in turn functions of the inputs $x_i$. Here are the equations governing these relationships:</p>
+<p>$\begin{align}<br>
+C &amp;= \frac{1}{m}\sum_{i=1}^m L_i, \\<br>
+L_i &amp;= (y - \hat{y})^2, \\[1em]<br>
+\hat{y}_i &amp;= wx_i.<br>
+\end{align}$</p>
+<p>The chain rule tells us precisely how to calculate $\d{C}{w}$ from these equations! Through repeated use of the chain rule, we see that:</p>
+<p>$\begin{align}<br>
+\d{C}{w} &amp;= \sum_{i=1}^m\p{C}{L_i}\d{L_i}{w} \\<br>
+&amp;= \sum_{i=1}^m\p{C}{L_i}\d{L_i}{\hat{y_i}}\d{\hat{y_i}}{w}.<br>
+\end{align}$</p>
+<p>These three quantities are easy to calculate from the equations above:</p>
+<p>$\begin{align}<br>
+\p{C}{L_i} &amp;= \tfrac{1}{m}, \\<br>
+\d{L_i}{\hat{y_i}} &amp;= -2(y_i-\hat{y_i}), \\<br>
+\d{\hat{y_i}}{w} &amp;= x_i.<br>
+\end{align}$</p>
+<p>Combining these using the chain rule, we see that</p>
+<p>$\d{C}{w} = -\frac{2}{m} \sum_{i=1}^m (y_i-\hat{y_i})x_i.$</p>
+<p>This means we can use the following algorithm to compute the gradient of our cost function for a particular value of $w$:</p>
+<blockquote>
+<p><strong>Algorithm 4. Gradient Computation</strong></p>
+<ol>
+<li>Initialize <code>D_w=0</code>, set <code>x</code> to the first input and <code>y</code> to its corresponding output in our data set, and set <code>m</code> to the number of data points.</li>
+<li>Compute the neuron's output <code>y_hat = w * x</code>.</li>
+<li>Compute the contribution to <code>D_w</code> from this data point, <code>D_w = D_w - 2 * (y - y_hat) * x</code>.</li>
+<li>Set <code>x</code> to the next input and <code>y</code> to its corresponding output, go back to step 2 and repeat until we have exhausted all our data.</li>
+<li>Set <code>D_w = D_w / m</code>.</li>
+</ol>
+</blockquote>
+<h1 id="puttingittogether">Putting it together</h1>
+<br>
+<p>We have now completely described our one-parameter neuron and how it learns! Below is some Python code which encapsulates our model and allows us to train a neuron given input and output data. The first class, <code>Neuron</code>, is a base class which we will continue to use as we implement more complex neurons. The second, <code>OneParameterNeuron</code>, inherits from Neuron and is a complete model of our on-parameter neuron.</p>
+<pre><code class="language-python">import time
+from abc import abstractmethod
+
+class Neuron:
+    def __init__(self):
+        self.total_epochs = 0
+        self.parameters = {}
+        
+    @abstractmethod
+    def predict(self, input):
+        pass
+    
+    @abstractmethod
+    def compute_gradient(self, inputs, true_outputs):
+        pass
+            
+    @abstractmethod
+    def gradient_descent(self, inputs, true_outputs, learning_rate):
+        pass
+    
+    def loss(self, actual, prediction):
+        return (actual - prediction)**2
+        
+    def cost(self, inputs, true_outputs):
+        sum_of_losses = 0
+        for idx, input in enumerate(inputs):
+            prediction = self.predict(input)
+            actual = true_outputs[idx]
+            sum_of_losses += self.loss(actual, prediction)
+        return sum_of_losses / len(inputs)
+    
+    def train(self, inputs, true_outputs, epochs=100, learning_rate=0.01):
+        start = time.time()
+        for epoch in range(epochs):
+            self.gradient_descent(inputs, true_outputs, learning_rate)
+            if epoch == 0 or (epoch + 1) % 10 == 0 or epoch == epochs - 1:
+                end = time.time()
+                cost = self.cost(inputs, true_outputs)
+                print(f'Epoch: {self.total_epochs + 1:&lt;10} '
+                      f'Cost = {cost:&lt;20.9E} '
+                      f'Time = {1000 * (end - start):.9f}ms')
+                start = time.time()
+            self.total_epochs += 1
+            
+class OneParameterNeuron(Neuron):
+    def __init__(self):
+        super().__init__()
+        self.parameters = {'w': 0}
+        
+    def predict(self, input):
+        return self.parameters['w'] * input
+    
+    def compute_gradient(self, inputs, true_outputs):
+        D_w = 0
+        for idx, input in enumerate(inputs):
+            actual = true_outputs[idx]
+            prediction = self.predict(input)
+            D_w += -2 * (actual - prediction) * input
+        D_w /= len(inputs)
+        return D_w
+            
+    def gradient_descent(self, inputs, true_outputs, learning_rate):
+        gradient = self.compute_gradient(inputs, true_outputs)
+        self.parameters['w'] -= learning_rate * gradient
+</code></pre>
+<br>
+<p>Calling the <code>train</code> method for a neuron launches 100 iterations, or <strong>epochs</strong>, of gradient descent. It defaults to zero as an initial choice of weight, and uses a learning rate of $0.01$.</p>
+<p>Let's see it in action!</p>
+<amp-iframe height="600px" width="100%" src="https://repl.it/@EricShapiro/Linear-Regression-with-Neurons-1?lite=true" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals" layout="responsive"></amp-iframe>
+<br>
+<p>It actually works! Look how small our model got the cost after just 100 epochs of gradient descent! And look how close it got to the optimal value of $w=2$.</p>
+<p>There are some huge improvements that could be made to this code, in particular the <code>cost</code> and <code>compute_gradient</code> methods could be drastically sped up. However, this accurately reflects the algorithms we've discussed so far.</p>
+<p>It could be interesting to try training our neuron on a larger, not-so-perfect data set. We'll use this data, which consists of 1000 points which follow the same general trend as our previous data, but no longer sit perfectly on the line $y=2x$. This is more like data we might encounter in the real world!</p>
+<amp-iframe width="100%" height="400" frameborder="0" src="https://plot.ly/~eshapiro/89.embed" sandbox="allow-scripts allow-same-origin" layout="responsive"></amp-iframe>
+<p>Watch what happens when we train our neuron with this new data:</p>
+<amp-iframe height="600px" width="100%" src="https://repl.it/@EricShapiro/Linear-Regression-with-Neurons-2?lite=true" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals" layout="responsive"></amp-iframe>
+<br>
+<p>It still did a pretty good job! Of course, it can't get the cost down as low anymore, but that's because the data is no longer perfectly linear and so there is some unavoidable error in any linear model of the data. Here is the trendline that our model predicted, superimposed on the data:</p>
+<amp-iframe width="100%" height="400" frameborder="0" src="https://plot.ly/~eshapiro/93.embed" sandbox="allow-scripts allow-same-origin" layout="responsive"></amp-iframe>
+<br>
+<p>I'd say that looks pretty good! As a comparison, least-squares linear regression predicts a slope of $1.95148117$ for this same data.</p>
+<p>This post is getting pretty long, so I'll leave it at that for now. In my next post, we'll improve our neuron by adding a second parameter, and we'll see how this makes everything a bit more complicated.</p>
+
+
+            </section>
+
+        </article>
+    </main>
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="../../">Deep Learning</a> © 2019</section>
+        <section class="poweredby">Proudly published with <a href="https://ghost.org">Ghost</a></section>
+    </footer>
+</body>
