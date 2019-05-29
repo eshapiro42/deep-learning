@@ -27,7 +27,7 @@ might send ou">
     <meta property="og:url" content="http://localhost:2368/linear-regression-with-neurons/">
     <meta property="og:image" content="https://images.unsplash.com/photo-1511268594014-0e9d3ea5c33e?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ">
     <meta property="article:published_time" content="2019-05-28T02:42:02.000Z">
-    <meta property="article:modified_time" content="2019-05-29T04:16:04.000Z">
+    <meta property="article:modified_time" content="2019-05-29T06:46:59.000Z">
     <meta property="article:publisher" content="https://www.facebook.com/ghost">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Linear Regression With Neurons (1)">
@@ -72,7 +72,7 @@ might send ou">
     "headline": "Linear Regression With Neurons (1)",
     "url": "http://localhost:2368/linear-regression-with-neurons/",
     "datePublished": "2019-05-28T02:42:02.000Z",
-    "dateModified": "2019-05-29T04:16:04.000Z",
+    "dateModified": "2019-05-29T06:46:59.000Z",
     "image": {
         "@type": "ImageObject",
         "url": "https://images.unsplash.com/photo-1511268594014-0e9d3ea5c33e?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
@@ -181,6 +181,7 @@ C &amp;= \tfrac{1}{3}\big(L(x_1)+L(x_2)+L(x_2)\big) \\<br>
 &amp;= \tfrac{56}{3} \\<br>
 &amp;\approx 18.6666666667.<br>
 \end{align}$</p>
+<p>Because we have chosen our loss function to be the squared error, and our cost is the mean of the losses, this cost function is called <strong>mean square error</strong>.</p>
 <p>So the goal now becomes <em>minimizing the cost</em> of our neuron! Once we have settled on a weight which makes the cost sufficiently low, we say our neuron is <strong>trained</strong>.</p>
 <p>Okay, so our neuron currently has a cost of $18.6666666667$. This doesn't really tell us too much by itself. We want the network to choose a new weight which will result in a lower cost. How can we accomplish this?</p>
 <p>One idea would be to keep randomly selecting weights and keeping track of which results in the lowest cost, i.e., is giving the best predictions according to our metric.</p>
@@ -240,12 +241,13 @@ C_{0.1}  &amp;= 16.8466666667.<br>
 <li>Go back to step 2 and repeat for as long as you like, or until <code>D_w</code> is zero.</li>
 </ol>
 </blockquote>
+<p>This algorithm, as simple as it may seem, forms the basis for how neural networks learn from data.</p>
 <h1 id="computingthegradient">Computing the gradient</h1>
 <p>Since our neuron only has one weight to optimize, in this case 'gradient' just means derivative. We will shortly see an example where this is no longer the case. But for now, we need to figure out a way of calculating the derivative of our cost function for a specific value of $w$. That is, we need to find $\d{C}{w}$.</p>
 <p>Recall that $C$ is a function of the losses $L_i$, which are in turn functions of the outputs $\hat{y_i}$, which are in turn functions of the inputs $x_i$. Here are the equations governing these relationships:</p>
 <p>$\begin{align}<br>
 C &amp;= \frac{1}{m}\sum_{i=1}^m L_i, \\<br>
-L_i &amp;= (y - \hat{y})^2, \\[1em]<br>
+L_i &amp;= (y_i - \hat{y_i})^2, \\[1em]<br>
 \hat{y}_i &amp;= wx_i.<br>
 \end{align}$</p>
 <p>The chain rule tells us precisely how to calculate $\d{C}{w}$ from these equations! Through repeated use of the chain rule, we see that:</p>
@@ -272,8 +274,23 @@ L_i &amp;= (y - \hat{y})^2, \\[1em]<br>
 <li>Set <code>D_w = D_w / m</code>.</li>
 </ol>
 </blockquote>
+<p>For this one-parameter network, it is easy to explictly compute the optimal weight, since we have a formula for $\d{C}{w}$. From calculus, we know that the cost's minimum must occur when $\d{C}{w}=0$. That is, when</p>
+<p>$\begin{align}<br>
+0 &amp;= -\frac{2}{m} \sum_{i=1}^m (y_i-\hat{y_i})x_i \\<br>
+&amp;= -\frac{2}{m} \sum_{i=1}^m (y_i-wx_i)x_i \\<br>
+&amp;= -\frac{2}{m} \sum_{i=1}^m y_ix_i + \frac{2w}{m} \sum_{i=1}^m x_i^2.<br>
+\end{align}$</p>
+<p>This is easily solved for $w$:</p>
+<p>$w = \frac{\sum_{i=1}^m y_ix_i}{\sum_{i=1}^m x_i^2}.$</p>
+<p>This technique for finding $w$ is conventionally called <strong>least squares linear regression through the origin</strong>. In the case of our example, this becomes, as expected,</p>
+<p>$\begin{align}<br>
+w &amp;= \tfrac{2\cdot 1 + 4\cdot 2 + 6\cdot 3}{1^2 + 2^2 + 3^2} \\<br>
+&amp;= \tfrac{28}{14} \\[.5em]<br>
+&amp;= 2.<br>
+\end{align}$</p>
+<p>So our one-parameter neuron is really no match for what we can do analytically. But that's not the point. When we work with more complicated neurons, and link them together into neural networks, they quickly begin to solve problems that we do not have other mathematical tools to solve. And optimizing their parameters becomes impossible to do analytically, but gradient descent has no problem with it!</p>
 <h1 id="puttingittogether">Putting it together</h1>
-<p>We have now completely described our one-parameter neuron and how it learns! Below is some Python code which encapsulates our model and allows us to train a neuron given input and output data. The first class, <code>Neuron</code>, is a base class which we will continue to use as we implement more complex neurons. The second, <code>OneParameterNeuron</code>, inherits from Neuron and is a complete model of our on-parameter neuron.</p>
+<p>We have now completely described our one-parameter neuron and how it learns! Below is some Python code which encapsulates our model and allows us to train a neuron given input and output data. The first class, <code>Neuron</code>, is a base class which we will continue to use as we implement more complex neurons. The second, <code>OneParameterNeuron</code>, inherits from Neuron and is a complete model of our one-parameter neuron.</p>
 <pre><code class="language-python">import time
 from abc import abstractmethod
 
@@ -354,7 +371,7 @@ class OneParameterNeuron(Neuron):
 <p>It still did a pretty good job! Of course, it can't get the cost down as low anymore, but that's because the data is no longer perfectly linear and so there is some unavoidable error in any linear model of the data. Here is the trendline that our model predicted, superimposed on the data:</p>
 <amp-iframe width="100%" height="400" frameborder="0" src="https://plot.ly/~eshapiro/93.embed?showlink=false" sandbox="allow-scripts allow-same-origin" layout="responsive"></amp-iframe>
 <br>
-<p>I'd say that looks pretty good! As a comparison, least-squares linear regression predicts a slope of $1.95148117$ for this same data.</p>
+<p>I'd say that looks pretty good! As a comparison, least-squares linear regression through the origin predicts a slope of $1.95078950636752$ for this same data.</p>
 <p>This post is getting pretty long, so I'll leave it at that for now. In my next post, we'll improve our neuron by adding a second parameter, and we'll see how this makes everything a bit more complicated.</p>
 
 
