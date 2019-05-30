@@ -28,7 +28,7 @@ performa">
     <meta property="og:url" content="http://localhost:2368/linear-regression-with-neurons-2/">
     <meta property="og:image" content="https://images.unsplash.com/photo-1499626662328-b83a935441a4?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ">
     <meta property="article:published_time" content="2019-05-29T23:09:00.000Z">
-    <meta property="article:modified_time" content="2019-05-30T03:50:11.000Z">
+    <meta property="article:modified_time" content="2019-05-30T04:40:55.000Z">
     <meta property="article:publisher" content="https://www.facebook.com/ghost">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Linear Regression with Neurons (2)">
@@ -74,7 +74,7 @@ performa">
     "headline": "Linear Regression with Neurons (2)",
     "url": "http://localhost:2368/linear-regression-with-neurons-2/",
     "datePublished": "2019-05-29T23:09:00.000Z",
-    "dateModified": "2019-05-30T03:50:11.000Z",
+    "dateModified": "2019-05-30T04:40:55.000Z",
     "image": {
         "@type": "ImageObject",
         "url": "https://images.unsplash.com/photo-1499626662328-b83a935441a4?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
@@ -235,6 +235,7 @@ b &amp;= 5.09462935.<br>
 <p>Here's another plot of the cost over these 1000 epochs of gradient descent:</p>
 <amp-iframe width="100%" height="400" frameborder="0" src="https://plot.ly/~eshapiro/109.embed?showlink=false" sandbox="allow-scripts allow-same-origin" layout="responsive"></amp-iframe>
 <p>The cost is definitely not decreasing by much anymore by the time 1000 epochs have passed. Notice how toward the beginning of training, the cost was decreasing a lot faster than toward the end. This is fairly common. In the early iterations of gradient descent, our parameters are typically very far from their targets and need to be adjusted by large amounts to compensate. Then as they begin to get better and better, gradient descent continues to fine-tune them but does not have quite as much to do anymore.</p>
+<p>The reason that $b$ converged more slowly than $w$ is actually a direct result of the shape of our cost function. If you go back up and look at the cost function straight on in the $w$ and $b$ directions, you'll see that both are relatively parabolic, but the gradient in the $w$-direction is much steeper than the gradient in the $b$-direction. That's why gradient descent takes longer to find a good value for $b$.</p>
 <p>To wrap things up, let's take a look at how our two-parameter neuron is fitting our data after being trained for 1000 epochs:</p>
 <amp-iframe width="100%" height="400" frameborder="0" src="https://plot.ly/~eshapiro/111.embed?showlink=false" sandbox="allow-scripts allow-same-origin" layout="responsive"></amp-iframe>
 <p>I'd say that looks pretty good.</p>
