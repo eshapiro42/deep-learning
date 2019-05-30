@@ -1,0 +1,526 @@
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Linear Regression with Neurons (2)</title>
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="../assets/built/screen.css?v=8d5645c3cd">
+
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+    <link rel="canonical" href="index.html">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link rel="amphtml" href="amp/index.html">
+    
+    <meta property="og:site_name" content="Deep Learning">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Linear Regression with Neurons (2)">
+    <meta property="og:description" content="More complicated data
+Last time, I introduced a simple artificial neuron with a single parameter, $w$.
+
+
+
+We figured out how, given labeled training data[1]  that was reasonably linear
+and passed through the origin, this neuron could learn to make reasonable
+predictions. The key to this was defining a cost function to measure how poorly
+the neuron was performing for a given weight $w$, and then iteratively applying
+gradient descent to obtain new values of $w$, lower the cost and improve
+performa">
+    <meta property="og:url" content="http://localhost:2368/linear-regression-with-neurons-2/">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1499626662328-b83a935441a4?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ">
+    <meta property="article:published_time" content="2019-05-29T23:09:00.000Z">
+    <meta property="article:modified_time" content="2019-05-30T02:46:16.000Z">
+    <meta property="article:publisher" content="https://www.facebook.com/ghost">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Linear Regression with Neurons (2)">
+    <meta name="twitter:description" content="More complicated data
+Last time, I introduced a simple artificial neuron with a single parameter, $w$.
+
+
+
+We figured out how, given labeled training data[1]  that was reasonably linear
+and passed through the origin, this neuron could learn to make reasonable
+predictions. The key to this was defining a cost function to measure how poorly
+the neuron was performing for a given weight $w$, and then iteratively applying
+gradient descent to obtain new values of $w$, lower the cost and improve
+performa">
+    <meta name="twitter:url" content="http://localhost:2368/linear-regression-with-neurons-2/">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1499626662328-b83a935441a4?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Eric Shapiro">
+    <meta name="twitter:site" content="@tryghost">
+    <meta property="og:image:width" content="1080">
+    <meta property="og:image:height" content="1072">
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Deep Learning",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "http://localhost:2368/favicon.ico",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Eric Shapiro",
+        "url": "http://localhost:2368/author/eric/",
+        "sameAs": []
+    },
+    "headline": "Linear Regression with Neurons (2)",
+    "url": "http://localhost:2368/linear-regression-with-neurons-2/",
+    "datePublished": "2019-05-29T23:09:00.000Z",
+    "dateModified": "2019-05-30T02:46:16.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1499626662328-b83a935441a4?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "width": 1080,
+        "height": 1072
+    },
+    "description": "More complicated data\nLast time, I introduced a simple artificial neuron with a single parameter, $w$.\n\n\n\nWe figured out how, given labeled training data[1]  that was reasonably linear\nand passed through the origin, this neuron could learn to make reasonable\npredictions. The key to this was defining a cost function to measure how poorly\nthe neuron was performing for a given weight $w$, and then iteratively applying\ngradient descent to obtain new values of $w$, lower the cost and improve\nperforma",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://localhost:2368/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 2.23">
+    <link rel="alternate" type="application/rss+xml" title="Deep Learning" href="../rss/index.html">
+    <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/MathJax.js?config=TeX-MML-AM_CHTML">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]],
+        processEscapes: true
+    },
+    TeX: {
+    	Macros: {
+      		R: "{\\mathbb{R}}",
+            abs: ["{\\lvert #1 \\rvert}", 1],
+            d: ["{\\tfrac{\\mathrm{d}#1}{\\mathrm{d}#2}}", 2],
+            p: ["{\\tfrac{\\partial #1}{\\partial #2}}", 2],
+    	}
+    }
+});
+</script>
+
+<style type="text/css">
+  .gist {width: 100% !important;}
+  .gist-file
+  .gist-data {max-width: 100%;}
+</style>
+
+</head>
+<body class="post-template">
+
+    <div class="site-wrapper">
+
+        
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+                <a class="site-nav-logo" href="../">Deep Learning</a>
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="../">Home</a></li>
+    <li class="nav-tag" role="menuitem"><a href="http://localhost:2368/tag/getting-started/">Tag</a></li>
+    <li class="nav-author" role="menuitem"><a href="http://localhost:2368/author/ghost/">Author</a></li>
+    <li class="nav-help" role="menuitem"><a href="https://docs.ghost.org">Help</a></li>
+</ul>
+
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+                <a class="social-link social-link-fb" href="https://www.facebook.com/ghost" title="Facebook" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"></path></svg>
+</a>
+                <a class="social-link social-link-tw" href="https://twitter.com/tryghost" title="Twitter" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"></path></svg>
+</a>
+        </div>
+            <a class="rss-button" href="https://feedly.com/i/subscription/feed/http://localhost:2368/rss/" title="RSS" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><circle cx="6.18" cy="17.82" r="2.18"></circle><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"></path></svg>
+</a>
+    </div>
+</nav>
+    </div>
+</header>
+
+
+<main id="site-main" class="site-main outer">
+    <div class="inner">
+
+        <article class="post-full post ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="2019-05-29">29 May 2019</time>
+                </section>
+                <h1 class="post-full-title">Linear Regression with Neurons (2)</h1>
+            </header>
+
+            <figure class="post-full-image">
+                <img srcset="https://images.unsplash.com/photo-1499626662328-b83a935441a4?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ 300w,
+                            https://images.unsplash.com/photo-1499626662328-b83a935441a4?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ 600w,
+                            https://images.unsplash.com/photo-1499626662328-b83a935441a4?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ 1000w,
+                            https://images.unsplash.com/photo-1499626662328-b83a935441a4?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ 2000w" sizes="(max-width: 800px) 400px,
+                            (max-width: 1170px) 700px,
+                            1400px" src="https://images.unsplash.com/photo-1499626662328-b83a935441a4?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ" alt="Linear Regression with Neurons (2)">
+            </figure>
+
+            <section class="post-full-content">
+                <div class="post-content">
+                    <!--kg-card-begin: markdown--><h1 id="morecomplicateddata">More complicated data</h1>
+<p>Last time, I introduced a simple artificial neuron with a single parameter, $w$.</p>
+<p><img src="../content/images/2019/05/one-parameter-neuron.svg" alt="one-parameter-neuron"></p>
+<p>We figured out how, given labeled training data<sup class="footnote-ref"><a href="index.html#fn1" id="fnref1">[1]</a></sup> that was reasonably linear and passed through the origin, this neuron could learn to make reasonable predictions. The key to this was defining a cost function to measure how poorly the neuron was performing for a given weight $w$, and then iteratively applying gradient descent to obtain new values of $w$, lower the cost and improve performance. That learning process can be summarized as follows:</p>
+<blockquote>
+<ol>
+<li>Choose an initial value for $w$.</li>
+<li>Feed our labeled data to the neuron.</li>
+<li>Compare each of the neuron's predictions to the true value from the training data.</li>
+<li>Compute the gradient of the cost function from these predictions.</li>
+<li>Apply one iteration of gradient descent to move $w$ in the direction that will lower the cost.</li>
+<li>Go back to step 2 and repeat until you're satisfied with the neuron's predictions.</li>
+</ol>
+</blockquote>
+<p>Now let's up it a notch. What if we still had linear training data, but it did not pass through the origin? Here's the data set we'll be working with for the remainder of this post:</p>
+<iframe width="100%" height="400" frameborder="0" scrolling="no" src="https://plot.ly/~eshapiro/95.embed?showlink=false"></iframe>
+<p>Spoiler alert: I generated this data using random fluctuations from the line $y=-2x+5$. These fluctuations are normally distributed with a mean of $0$ and a standard deviation of $2$. This data is therefore well suited for linear regression! 😄</p>
+<p>Our training data consists of 1000 points. In table form, the data looks like this (in no particular order):</p>
+<p>$$\begin{array}{|c|c|c|}<br>
+\hline<br>
+i &amp;   x           &amp; y \\<br>
+\hline<br>
+1 &amp;  -0.829779953 &amp; 8.11066094 \\<br>
+\hline<br>
+2 &amp;   2.20324493  &amp; -0.0548983078 \\<br>
+\hline<br>
+3 &amp;   -4.99885625 &amp; 16.6263988 \\<br>
+\hline<br>
+4 &amp;   -1.97667427 &amp; 10.5142884 \\<br>
+\hline<br>
+5 &amp;   -3.53244109 &amp; 9.13677504 \\<br>
+\hline<br>
+\vdots &amp; \vdots   &amp; \vdots \\<br>
+\hline<br>
+\end{array}$$</p>
+<p>Since this data does not go through the origin, you might expect that if we train our one-parameter neuron with this data, we will not get very good predictions. Let's give it a try.</p>
+<iframe height="600px" width="100%" src="https://repl.it/@EricShapiro/Linear-Regression-with-Neurons-2-1?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"></iframe>
+<br>
+<p>Here's the best fit line predicted by our one-parameter neuron after training on this data:</p>
+<iframe width="100%" height="400" frameborder="0" scrolling="no" src="https://plot.ly/~eshapiro/99.embed?showlink=false"></iframe>
+<p>That's... not great. It did manage to get the slope right, so our neuron is really doing everything it can to minimize its cost. It just doesn't have the ability to make a prediction that <em>doesn't</em> go through the origin! So let's create a new neuron that does have this ability.</p>
+<p><img src="../content/images/2019/05/two-parameter-neuron.svg" alt="two-parameter-neuron"></p>
+<p>We haven't done anything groundbreaking here. All we've done is add a new parameter $b$ to the neuron which is also used in computing the neuron's output. We call $b$ the neuron's <strong>bias</strong>. Given an input value $x_i$, the neuron will now output the prediction $\hat{y_i} = wx_i+b$, using both the weight and the bias.</p>
+<p>Our loss function stays the same for each data point,</p>
+<p>$$L(x_i) = (y_i - \hat{y_i})^2,$$</p>
+<p>as does our cost function for the entire neuron,</p>
+<p>$$C = \frac{1}{m}\sum_{i=1}^m L(x_i).$$</p>
+<p>(Recall that $m$ is the number of points in our training data.)</p>
+<p>However, our predictions $\hat{y}$ are now calculated using a new formula. Since we've doubled the number of parameters in our neuron, we need to rethink how we do gradient descent.</p>
+<h1 id="gradientdescentwithtwoparameters">Gradient descent with two parameters</h1>
+<p>With two parameters, our cost function becomes a little more complicated. It's now a function of two variables, $w$ and $b$. If we were to visualize the cost function for our data over a range of different values of weights and biases, it would look like this:</p>
+<iframe width="600" height="500" frameborder="0" scrolling="no" src="https://plot.ly/~eshapiro/103.embed?showlink=false"></iframe>
+<p>If you move the surface around a bit, you'll notice that the optimal weight is roughly $-2$ and the optimal bias is roughly $5$, just as we'd expect.</p>
+<p>Luckily, differential calculus doesn't get too much more complicated as we add dimensions. The gradient is no longer just the derivative of our cost function. It is really a vector of its partial derivatives. That is,</p>
+<p>$$\nabla C = \begin{bmatrix}<br>
+\dfrac{\partial C}{\partial w} \\[.5em]<br>
+\dfrac{\partial C}{\partial b}<br>
+\end{bmatrix}.$$</p>
+<p>If this is gibberish to you, don't worry. You don't need to follow along with the math to get a sense of what's going on.</p>
+<p>We calculate the partial derivatives much the same way we calculated the ordinary derivative last time — using the chain rule.</p>
+<p>$$\begin{align}<br>
+\p{C}{w} &amp;= \sum_{i=1}^m \p{C}{L_i} \p{L_i}{\hat{y}_i} \p{\hat{y}_i}{w}, \\<br>
+\p{C}{b} &amp;= \sum_{i=1}^m \p{C}{L_i} \p{L_i}{\hat{y}_i} \p{\hat{y}_i}{b}.<br>
+\end{align}$$</p>
+<p>The intermediate partial derivatives are as follows:</p>
+<p>$$\begin{align}<br>
+\p{C}{L_i} &amp;= \tfrac{1}{m}, \\<br>
+\p{L_i}{\hat{y}_i} &amp;= -2(y_i-\hat{y}_i), \\<br>
+\p{\hat{y}_i}{w} &amp;= x_i, \\<br>
+\p{\hat{y}_i}{b} &amp;= 1.<br>
+\end{align}$$</p>
+<p>Combining these using the chain rule, we see that</p>
+<p>$$\begin{align}<br>
+\p{C}{w} &amp;= -\frac{2}{m} \sum_{i=1}^m (y_i - \hat{y}_i) x_i, \\<br>
+\p{C}{b} &amp;= -\frac{2}{m} \sum_{i=1}^m (y_i - \hat{y}_i).<br>
+\end{align}$$</p>
+<p>The partial derivative with respect to $w$ is actually the same as last time, and the derivative with respect to $b$ is actually simpler. Each component of the gradient tells us the direction of steepest ascent of the cost function $C$ in that direction. So, for instance, $\p{C}{w}$ gives the direction of steepest ascent in the $w$ direction at any point.</p>
+<p>Our gradient descent algorithm doesn't have to change too much! We just update each variable independently according to its component of the gradient. That is, if $\alpha$ represents our chosen learning rate, we update our parameters according to the rules:</p>
+<p>$$\begin{align}<br>
+w &amp;\to w - \alpha\p{C}{w} \\<br>
+b &amp;\to b - \alpha\p{C}{b}.<br>
+\end{align}$$</p>
+<p>If we iterate our gradient descent algorithm enough times with a good choice of learning rate and a little luck, we should always arrive at a choice of parameters $w$ and $b$ which minimizes the cost of our neuron!</p>
+<p>As an aside, we can actually find the optimum cost analytically, just as we did last time. The mimimum value occurs where the gradient is zero, i.e., where each partial derivative is zero. This gives us two equations in two unknowns, which can be solved with some algebra. I will not go through the specifics, but the cost is minimized when</p>
+<p>$$\begin{align}<br>
+w &amp;= \dfrac{m \sum_{i=1}^m x_i y_i - \sum_{i=1}^m x_i \sum_{i=1}^m y_i}{m \sum_{i=1}^m x_i^2 - \big(\sum_{i=1}^m x_i\big)^2}, \\[1em]<br>
+b &amp;= \dfrac{\sum_{i=1}^m y_i \sum_{i=1}^m x^2 - \sum_{i=1}^m x_i \sum_{i=1}^m x_i y_i}{m \sum_{i=1}^m x_i^2 - \big(\sum_{i=1}^m x_i\big)^2}.<br>
+\end{align}$$</p>
+<p>This technique of finding the optimal values of $w$ and $b$ analytically is called <strong>linear regression</strong>, and in the case of our training data it results in the following values:</p>
+<p>$$\begin{align}<br>
+w &amp;= -1.99787325, \\<br>
+b &amp;= 5.09462935.<br>
+\end{align}$$</p>
+<h1 id="testingourneuron">Testing our neuron</h1>
+<p>Let's see how close our two-parameter neuron comes to finding these optimal values!</p>
+<p>The following is Python code which implements the algorithm for gradient descent that we've just described, updating the parameters $w$ and $b$ simultaneously according to their respective components of the gradient. Note that the <code>TwoParameterNeuron</code> class inherits from the same <code>Neuron</code> class that I defined in my last post.</p>
+<script src="https://gist.github.com/eshapiro42/89cfaf59b6ad7ee6e0a346aca82ce9fa.js"></script>
+<br>
+<p>If we train this neuron for 100 epochs on the training data defined at the beginning of this post, with a learning rate of 0.01, here's what happens:</p>
+<iframe height="600px" width="100%" src="https://repl.it/@EricShapiro/Linear-Regression-with-Neurons-2-2?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"></iframe>
+<br>
+<p>Uh oh! Our neuron reached a pretty good value for $w$, but that value for $b$ is still pretty far off. What happened?</p>
+<p>Notice how the cost is still decreasing substantially with every iteration. Here's a plot of the neuron's cost as a function of the number of epochs it's trained for:</p>
+<iframe width="100%" height="400" frameborder="0" scrolling="no" src="https://plot.ly/~eshapiro/105.embed?showlink=false"></iframe>
+<p>Okay, so maybe "substantially" was an overstatement, but the cost is definitely still going down! This implies that we haven't trained our neuron long enough. Let's try training it longer — we'll try 1000 epochs — and see if it does any better.</p>
+<iframe height="600px" width="100%" src="https://repl.it/@EricShapiro/Linear-Regression-with-Neurons-2-3?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"></iframe>
+<br>
+<p>Much better! Now our neuron's definitely on par with linear regression!</p>
+<p>Here's another plot of the cost over these 1000 epochs of gradient descent:</p>
+<iframe width="100%" height="400" frameborder="0" scrolling="no" src="https://plot.ly/~eshapiro/109.embed?showlink=false"></iframe>
+<p>The cost is definitely not decreasing by much anymore by the time 1000 epochs have passed. Notice how toward the beginning of training, the cost was decreasing a lot faster than toward the end. This is fairly common. In the early iterations of gradient descent, our parameters are typically very far from their targets and need to be adjusted by large amounts to compensate. Then as they begin to get better and better, gradient descent continues to fine-tune them but does not have quite as much to do anymore.</p>
+<p>To wrap things up, let's take a look at how our two-parameter neuron is fitting our data after being trained for 1000 epochs:</p>
+<iframe width="100%" height="400" frameborder="0" scrolling="no" src="https://plot.ly/~eshapiro/111.embed?showlink=false"></iframe>
+<p>I'd say that looks pretty good.</p>
+<h1 id="whatsnext">What's next?</h1>
+<p>That's about it for linear regression. In my next post, I'll talk about adding non-linear activations to our neurons and combining them to form larger networks!</p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p>By labeled training data, I mean data consisting of values for both the inputs and the corresponding observed outputs. This is the data that we want our neuron to learn from so it can generate reasonable predictions. <a href="index.html#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
+<!--kg-card-end: markdown--><p></p><p></p>
+                </div>
+            </section>
+
+
+            <footer class="post-full-footer">
+
+
+                    
+<section class="author-card">
+        <span class="avatar-wrapper"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M3.513 18.998C4.749 15.504 8.082 13 12 13s7.251 2.504 8.487 5.998C18.47 21.442 15.417 23 12 23s-6.47-1.558-8.487-4.002zM12 12c2.21 0 4-2.79 4-5s-1.79-4-4-4-4 1.79-4 4 1.79 5 4 5z" fill="#FFF"></path></g></svg>
+</span>
+    <section class="author-card-content">
+        <h4 class="author-card-name"><a href="../author/eric/">Eric Shapiro</a></h4>
+            <p>Read <a href="../author/eric/">more posts</a> by this author.</p>
+    </section>
+</section>
+<div class="post-full-footer-right">
+    <a class="author-card-button" href="../author/eric/">Read More</a>
+</div>
+
+
+            </footer>
+
+
+        </article>
+
+    </div>
+</main>
+
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+
+
+                <article class="post-card post ">
+
+    <a class="post-card-image-link" href="../linear-regression-with-neurons/">
+        <img class="post-card-image" srcset="https://images.unsplash.com/photo-1511268594014-0e9d3ea5c33e?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ 300w,
+                    https://images.unsplash.com/photo-1511268594014-0e9d3ea5c33e?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ 600w,
+                    https://images.unsplash.com/photo-1511268594014-0e9d3ea5c33e?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ 1000w,
+                    https://images.unsplash.com/photo-1511268594014-0e9d3ea5c33e?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ 2000w" sizes="(max-width: 1000px) 400px, 700px" src="https://images.unsplash.com/photo-1511268594014-0e9d3ea5c33e?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ" alt="Linear Regression With Neurons (1)">
+    </a>
+
+    <div class="post-card-content">
+
+        <a class="post-card-content-link" href="../linear-regression-with-neurons/">
+
+            <header class="post-card-header">
+                <h2 class="post-card-title">Linear Regression With Neurons (1)</h2>
+            </header>
+
+            <section class="post-card-excerpt">
+                <p>What are neurons? The goal of this post is to introduce artificial neurons — the basic building blocks of a neural network — as well as the way in which they learn. Their general concept</p>
+            </section>
+
+        </a>
+
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        Eric Shapiro
+                    </div>
+
+                        <a href="../author/eric/" class="static-avatar author-profile-image"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M3.513 18.998C4.749 15.504 8.082 13 12 13s7.251 2.504 8.487 5.998C18.47 21.442 15.417 23 12 23s-6.47-1.558-8.487-4.002zM12 12c2.21 0 4-2.79 4-5s-1.79-4-4-4-4 1.79-4 4 1.79 5 4 5z" fill="#FFF"></path></g></svg>
+</a>
+                </li>
+            </ul>
+
+            <span class="reading-time">12 min read</span>
+
+        </footer>
+
+    </div>
+
+</article>
+
+        </div>
+    </div>
+</aside>
+
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="../">
+            <span>Deep Learning</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">—</span>
+    <div class="floating-header-title">Linear Regression with Neurons (2)</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"></path>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Linear%20Regression%20with%20Neurons%20(2)&amp;url=http://localhost:2368/linear-regression-with-neurons-2/" onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"></path></svg>
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:2368/linear-regression-with-neurons-2/" onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"></path></svg>
+        </a>
+    </div>
+    <progress id="reading-progress" class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+
+
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="../">Deep Learning</a> © 2019</section>
+                <nav class="site-footer-nav">
+                    <a href="../">Latest Posts</a>
+                    <a href="https://www.facebook.com/ghost" target="_blank" rel="noopener">Facebook</a>
+                    <a href="https://twitter.com/tryghost" target="_blank" rel="noopener">Twitter</a>
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+
+    <script>
+        var images = document.querySelectorAll('.kg-gallery-image img');
+        images.forEach(function (image) {
+            var container = image.closest('.kg-gallery-image');
+            var width = image.attributes.width.value;
+            var height = image.attributes.height.value;
+            var ratio = width / height;
+            container.style.flex = ratio + ' 1 0%';
+        })
+    </script>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="../assets/built/jquery.fitvids.js?v=8d5645c3cd"></script>
+
+
+    <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('#reading-progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+
+});
+</script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.14.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.14.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.14.0/themes/prism.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.14.0/plugins/line-numbers/prism-line-numbers.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.14.0/themes/prism-coy.min.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.14.0/components/prism-csharp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.14.0/components/prism-css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.14.0/components/prism-c.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.14.0/components/prism-clike.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.14.0/components/prism-python.min.js"></script>
+
+</body>

@@ -31,7 +31,7 @@ might send ou">
     <meta property="og:url" content="http://localhost:2368/linear-regression-with-neurons/">
     <meta property="og:image" content="https://images.unsplash.com/photo-1511268594014-0e9d3ea5c33e?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ">
     <meta property="article:published_time" content="2019-05-28T02:42:02.000Z">
-    <meta property="article:modified_time" content="2019-05-29T22:10:57.000Z">
+    <meta property="article:modified_time" content="2019-05-29T22:18:47.000Z">
     <meta property="article:publisher" content="https://www.facebook.com/ghost">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Linear Regression With Neurons (1)">
@@ -76,7 +76,7 @@ might send ou">
     "headline": "Linear Regression With Neurons (1)",
     "url": "http://localhost:2368/linear-regression-with-neurons/",
     "datePublished": "2019-05-28T02:42:02.000Z",
-    "dateModified": "2019-05-29T22:10:57.000Z",
+    "dateModified": "2019-05-29T22:18:47.000Z",
     "image": {
         "@type": "ImageObject",
         "url": "https://images.unsplash.com/photo-1511268594014-0e9d3ea5c33e?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
@@ -342,7 +342,7 @@ w &amp;= \tfrac{2\cdot 1 + 4\cdot 2 + 6\cdot 3}{1^2 + 2^2 + 3^2} \\<br>
 \end{align}$$</p>
 <p>So our one-parameter neuron is really no match for what we can do analytically. But that's not the point. When we work with more complicated neurons, and link them together into neural networks, they quickly begin to solve problems that we do not have other mathematical tools to solve. And optimizing their parameters becomes impossible to do analytically, but gradient descent has no problem with it!</p>
 <h1 id="puttingittogether">Putting it together</h1>
-<p>We have now completely described our one-parameter neuron and how it learns! Below is some Python code which encapsulates our model and allows us to train a neuron given input and output data. The first class, <code>Neuron</code>, is a base class which we will continue to use as we implement more complex neurons. The second, <code>OneParameterNeuron</code>, inherits from Neuron and is a complete model of our one-parameter neuron.</p>
+<p>We have now completely described our one-parameter neuron and how it learns! Below is some Python code which encapsulates our model and allows us to train a neuron given input and output data. The first class, <code>Neuron</code>, is a base class which we will continue to use as we implement more complex neurons. The second, <code>OneParameterNeuron</code>, inherits from <code>Neuron</code> and is a complete model of our one-parameter neuron.</p>
 <script src="https://gist.github.com/eshapiro42/639a1d69d8239a23318ca2bb6cf8b934.js"></script>
 <br>
 <p>Calling the <code>train</code> method for a neuron launches 100 iterations, or <strong>epochs</strong>, of gradient descent. It defaults to zero as an initial choice of weight, and uses a learning rate of $0.01$.</p>
@@ -395,6 +395,50 @@ w &amp;= \tfrac{2\cdot 1 + 4\cdot 2 + 6\cdot 3}{1^2 + 2^2 + 3^2} \\<br>
     <div class="inner">
         <div class="read-next-feed">
 
+                <article class="post-card post ">
+
+    <a class="post-card-image-link" href="../linear-regression-with-neurons-2/">
+        <img class="post-card-image" srcset="https://images.unsplash.com/photo-1499626662328-b83a935441a4?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ 300w,
+                    https://images.unsplash.com/photo-1499626662328-b83a935441a4?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ 600w,
+                    https://images.unsplash.com/photo-1499626662328-b83a935441a4?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ 1000w,
+                    https://images.unsplash.com/photo-1499626662328-b83a935441a4?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ 2000w" sizes="(max-width: 1000px) 400px, 700px" src="https://images.unsplash.com/photo-1499626662328-b83a935441a4?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ" alt="Linear Regression with Neurons (2)">
+    </a>
+
+    <div class="post-card-content">
+
+        <a class="post-card-content-link" href="../linear-regression-with-neurons-2/">
+
+            <header class="post-card-header">
+                <h2 class="post-card-title">Linear Regression with Neurons (2)</h2>
+            </header>
+
+            <section class="post-card-excerpt">
+                <p>More complicated data Last time, I introduced a simple artificial neuron with a single parameter, $w$. We figured out how, given labeled training data[1] that was reasonably linear and passed through the</p>
+            </section>
+
+        </a>
+
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        Eric Shapiro
+                    </div>
+
+                        <a href="../author/eric/" class="static-avatar author-profile-image"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M3.513 18.998C4.749 15.504 8.082 13 12 13s7.251 2.504 8.487 5.998C18.47 21.442 15.417 23 12 23s-6.47-1.558-8.487-4.002zM12 12c2.21 0 4-2.79 4-5s-1.79-4-4-4-4 1.79-4 4 1.79 5 4 5z" fill="#FFF"></path></g></svg>
+</a>
+                </li>
+            </ul>
+
+            <span class="reading-time">7 min read</span>
+
+        </footer>
+
+    </div>
+
+</article>
 
 
         </div>
